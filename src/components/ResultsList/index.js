@@ -1,9 +1,13 @@
 import React from "react";
-import ResultDetais from "../ResultDetails";
+import { TouchableOpacity } from "react-native";
+import { withNavigation } from "react-navigation";
 
+import ResultDetais from "../ResultDetails";
 import { Container, Title, List } from "./styles";
 
-export default function ResultsList({ title, results }) {
+function ResultsList({ title, results, navigation }) {
+  if (!results.length) return null;
+
   return (
     <Container>
       <Title>{title}</Title>
@@ -12,8 +16,16 @@ export default function ResultsList({ title, results }) {
         showsHorizontalScrollIndicator={false}
         data={results}
         keyExtractor={result => result.id}
-        renderItem={({ item }) => <ResultDetais result={item} />}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ResultsShow", { id: item.id })}
+          >
+            <ResultDetais result={item} />
+          </TouchableOpacity>
+        )}
       />
     </Container>
   );
 }
+
+export default withNavigation(ResultsList);
