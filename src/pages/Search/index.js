@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, ScrollView, Text, StyleSheet } from "react-native";
 
 import SearchBar from "../../components/SearchBar";
 import ResultsList from "../../components/ResultsList";
@@ -9,20 +9,30 @@ export default function Search() {
   const [search, setSearch] = useState("");
   const [searchApi, results, errorMessage] = useResults();
 
+  function filterResultsByPrice(price) {
+    // price === '$' || '$$' || '$$$'
+    return results.filter(result => result.price === price);
+  }
+
   return (
-    <View>
+    <>
       <SearchBar
         value={search}
         setValue={value => setSearch(value)}
         inputAction={() => searchApi(search)}
       />
       {errorMessage ? <Text>{errorMessage}</Text> : null}
-      <Text>{results.length}</Text>
-      <ResultsList title="Cost Effective" />
-      <ResultsList title="Bit Prieier" />
-      <ResultsList title="Big Spender" />
-    </View>
+      <ScrollView>
+        <ResultsList
+          title="Cost Effective"
+          results={filterResultsByPrice("$")}
+        />
+        <ResultsList title="Bit Prieier" results={filterResultsByPrice("$$")} />
+        <ResultsList
+          title="Big Spender"
+          results={filterResultsByPrice("$$$")}
+        />
+      </ScrollView>
+    </>
   );
 }
-
-const styles = StyleSheet.create({});
